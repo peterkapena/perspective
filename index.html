@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="index.css" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="common.js" defer></script>
+    <script src="vertices.js" defer></script>
+    <img src="sa_flag.png" id="sa_flag" style="display:none;" />
+    <script src="index.js" defer></script>
+    <title>Day 5</title>
+  </head>
+  <body>
+    <div class="container" style="max-width: 600px">
+      <div class="mb-2 text-center">
+        <canvas style="border-radius: 2%" height="600" width="600"></canvas>
+      </div>
+      <div class="m-1">
+        <span>Rotation:</span>
+        <button type="button" class="btn btn-primary btn-sm" data-rotation="x">
+          Along X
+        </button>
+        <button type="button" class="btn btn-primary btn-sm" data-rotation="y">
+          Along Y
+        </button>
+        <button type="button" class="btn btn-primary btn-sm" data-rotation="z">
+          Along Z
+        </button>
+      </div>
+      <div class="m-1">
+        <span>Spinning:</span>
+        <button type="button" class="btn btn-primary btn-sm" data-spinning="x">
+          Along X
+        </button>
+        <button type="button" class="btn btn-primary btn-sm" data-spinning="y">
+          Along Y
+        </button>
+        <button type="button" class="btn btn-primary btn-sm" data-spinning="z">
+          Along Z
+        </button>
+        <button type="button" class="btn btn-warning btn-sm" data-speed="-">
+        - Spin slower
+        </button>
+        <button type="button" class="btn btn-success btn-sm" data-speed="+">
+          Spin faster +
+        </button>
+      </div>
+      <div class="m-1">
+        <label for="customRange2" class="form-label"
+          >Speed in radians:
+          <span id="spnSpeed">0</span></label
+        >        
+    </div>
+  </body>
+</html>
