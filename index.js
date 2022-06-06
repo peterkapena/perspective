@@ -1,4 +1,5 @@
-const gl = document.querySelector("canvas").getContext("webgl");
+const canvas = document.querySelector("canvas");
+const gl = canvas.getContext("webgl");
 const image = document.getElementById("sa_flag");
 
 if (!gl) {
@@ -15,11 +16,14 @@ varying vec4 vcolours;
 uniform float y;
 uniform float x;
 uniform mat4 model;
+uniform mat4 proj;
+uniform mat4 view;
 attribute vec2 vtexture;
 varying vec2 fragtexture;
 
   void main(){
-      gl_Position = model * vec4(pos, 1.0) + vec4(x, y, 0, 0);
+      gl_Position = proj * view * model * vec4(pos, 1.0) + vec4(x, y, 0, 0);
+      // gl_Position = model * vec4(pos, 1.0) + vec4(x, y, 0, 0);
       vcolours = colours;
       fragtexture = vtexture;
   }`;
@@ -52,11 +56,7 @@ gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 
 const positionLocation = gl.getAttribLocation(program, "pos");
 gl.enableVertexAttribArray(positionLocation);
-gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 7*4, 0);
-
-// const coloursLocation = gl.getAttribLocation(program, "colours");
-// gl.enableVertexAttribArray(coloursLocation);
-// gl.vertexAttribPointer(coloursLocation, 3, gl.FLOAT, false, 7 * 4, 3 * 4);
+gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 7 * 4, 0);
 
 const texCoordBuffer = setBuffer(gl, textureCoords);
 
@@ -81,6 +81,22 @@ let model2 = createIdentityMat4();
 let spinner = null;
 let spinVelocity = 10;
 
+let view = createIdentityMat4();
+let projection = perspective(
+  createIdentityMat4(),
+  (100 * Math.PI) / 180,
+  canvas.width / canvas.height,
+  0.1,
+  10000
+);
+
+//place the camera at a position in x,y and z
+translate2(view, view, [0, 0, 1]);
+//after placing a camera you must invert that movement
+//moving a camera to the left feels the same as moving an object
+//to the right, so it is an inverse
+invert(view, view);
+
 draw();
 
 function draw() {
@@ -88,12 +104,14 @@ function draw() {
 
   gl.clear(gl.COLOR_BUFFER_BIT);
   gl.uniformMatrix4fv(gl.getUniformLocation(program, "model"), false, model1);
+  gl.uniformMatrix4fv(gl.getUniformLocation(program, "proj"), false, projection);
+  gl.uniformMatrix4fv(gl.getUniformLocation(program, "view"), false, view);
   gl.drawArrays(gl.TRIANGLES, 0, box.length / 7);
 
-  gl.uniformMatrix4fv(gl.getUniformLocation(program, "model"), false, model2);
-  gl.uniform1f(gl.getUniformLocation(program, "y"), -0.25);
-  gl.uniform1f(gl.getUniformLocation(program, "x"), 0);
-  gl.drawArrays(gl.TRIANGLES, 0, box.length / 7);
+  // gl.uniformMatrix4fv(gl.getUniformLocation(program, "model"), false, model2);
+  // gl.uniform1f(gl.getUniformLocation(program, "y"), -0.25);
+  // gl.uniform1f(gl.getUniformLocation(program, "x"), 0);
+  // gl.drawArrays(gl.TRIANGLES, 0, box.length / 7);
 
   requestAnimationFrame(draw);
 }
@@ -172,4 +190,12 @@ function spin(axis) {
 
 function convertToRad(degrees) {
   return degrees * (Math.PI / 180);
+}
+
+document.onmousemove = (event) => {
+  if (event.buttons === 1) {
+    x1 = event.offsetX / canvas.width;
+    y1 = event.offsetY / canvas.height;
+    model1 = translate(x1, -y1, 0);
+  }
 }
